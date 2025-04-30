@@ -8,6 +8,12 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+def are_downloads_completed(download_dir):
+    while True:
+        if not any(filename.endswith('.crdownload') for filename in os.listdir(download_dir)):
+            break
+        time.sleep(1)
+
 def resource_path(relative_path):
     return os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")), relative_path)
 
@@ -40,9 +46,9 @@ while number_of_downloads < number_of_analysis:
             button.click()
         except:
             continue
-        time.sleep(5)
         number_of_downloads += 1
 
     analysis_number -= 1
 
-driver.quit()
+if are_downloads_completed(download_path):
+    driver.quit()
