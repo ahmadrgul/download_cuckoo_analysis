@@ -1,7 +1,6 @@
 import sys
 import os
 import time
-import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -32,19 +31,18 @@ number_of_downloads = 0
 
 while number_of_downloads < number_of_analysis:
     url = f'https://sandbox.pikker.ee/analysis/{analysis_number}/export/'
-    response = requests.get(url)
-    if response.status_code == 404:
-        analysis_number -= 1
-        pass
-    else:
-        driver.get(url)
+    driver.get(url)
+    
+    if '404' not in driver.page_source:
         try:
             button = wait.until(EC.presence_of_element_located((By.XPATH, '//button[@type="submit" and contains(@class, "btn") and contains(@class, "btn-primary")]')))
             wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="submit" and contains(@class, "btn") and contains(@class, "btn-primary")]')))
             button.click()
         except:
-            pass
+            continue
         time.sleep(5)
         number_of_downloads += 1
+
+    analysis_number -= 1
 
 driver.quit()
